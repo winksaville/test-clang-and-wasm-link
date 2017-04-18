@@ -7,7 +7,9 @@ files into addTwoInc.wasm.
 Build clang v5.0, see [Using WebAssembly in LLVM](https://gist.github.com/yurydelendik/4eeff8248aeb14ce763e) into ~/prgs/llvmwasm.
 Note: this took my desktop with 32GB of ram on linux my laptop with 16GB of ram wasn't enough.
 
-Build from source [winksaville/binaryen](https://github.com/winksaville/binaryen) to ~/prgs/binaryen.
+Build the do-not-require-memoryBaseGlobals-or-tableBaseGlobals branch from
+source [winksaville/binaryen](https://github.com/winksaville/binaryen)
+to ~/prgs/binaryen.
 
 Build from source [wabt](https://github.com/WebAssembly/wabt) to ~/prgs/wabt.
 
