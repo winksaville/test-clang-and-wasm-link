@@ -4,16 +4,42 @@ and then uses wasm-merge to merge the two generated wasm
 files into addTwoInc.wasm.
 
 ## Prerequisites
-Build clang v5.0, see [Using WebAssembly in LLVM](https://gist.github.com/yurydelendik/4eeff8248aeb14ce763e) into ~/prgs/llvmwasm.
+- Build clang v5.0, see [Using WebAssembly in LLVM](https://gist.github.com/yurydelendik/4eeff8248aeb14ce763e) into ~/prgs/llvmwasm.
 Note: this took my desktop with 32GB of ram on linux my laptop with 16GB of ram wasn't enough.
 
-Build the do-not-require-memoryBaseGlobals-or-tableBaseGlobals branch from
+- Build the do-not-require-memoryBaseGlobals-or-tableBaseGlobals branch from
 source [winksaville/binaryen](https://github.com/winksaville/binaryen)
 to ~/prgs/binaryen.
 
-Build from source [wabt](https://github.com/WebAssembly/wabt) to ~/prgs/wabt.
+- Build from source [wabt](https://github.com/WebAssembly/wabt) to
+~/prgs/wabt. Don't for get to do a `git clone --recursive`
 
-## What I learned
+- yarn
+
+## Initialize
+```
+yarn
+yarn add:node-v8
+```
+
+## Test merge
+This tests wasm-merge of addTwo.c and inc.c to addTwoInc.wasm
+```
+yarn test:merge
+```
+
+## Test utils
+Utils is added to be able to compile and run wasm code.
+The current incarnation allows running the stages of
+clang to wasm compiliation using node and are async wrappers.
+Its a firt pass and will change significantly and I'll probably
+move it into one or more npm libraries to make it available
+to others, we'll see.
+```
+$ yarn test:utils
+```
+
+## What I learned about linking/merging
 My original [test](https://github.com/winksaville/test-emcc-and-wasm-link) used
 emcc and wasm-link that required modifing the generated code to get it to
 create addTwoInc.wasm. Turns out I needed to modify binaryen but it seems

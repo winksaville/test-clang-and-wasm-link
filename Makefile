@@ -9,7 +9,7 @@ wasm2wast=$(HOME)/prgs/wabt/out/clang/Debug/wasm2wast
 #	$(cc) -emit-llvm --target=wasm32 -Oz $< -c -o $(basename $<).bc
 #	$(llc) -asm-verbose=false $(basename $<).bc -o $(basename $<).s
 #	#$(s2wasm) --import-memory $(basename $<).s > $(basename $<).wast
-#	$(s2wasm) $(basename $<).s > $(basename $<).wast
+#	$(s2wasm) $(basename $<).s -o $(basename $<).wast
 #	$(wast2wasm) $(basename $<).wast -o $@
 
 %.s: %.c
@@ -17,10 +17,10 @@ wasm2wast=$(HOME)/prgs/wabt/out/clang/Debug/wasm2wast
 	$(llc) -asm-verbose=false $(basename $<).bc -o $(basename $<).s
 
 %.wast: %.s
-	$(s2wasm) --import-memory $< > $@
+	$(s2wasm) --import-memory $< -o $@
 
 %.main_wast: %.s
-	$(s2wasm) $< $@
+	$(s2wasm) $< -o $@
 
 %.wasm: %.wast
 	$(wast2wasm) $< -o $@

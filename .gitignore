@@ -1,3 +1,7 @@
+build/
+node-v8/
+node_modules/
+
 *.swp
 *.bc
 *.s
