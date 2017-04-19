@@ -5,49 +5,48 @@ wasm-merge=$(HOME)/prgs/binaryen/bin/wasm-merge
 wast2wasm=$(HOME)/prgs/wabt/out/clang/Debug/wast2wasm
 wasm2wast=$(HOME)/prgs/wabt/out/clang/Debug/wasm2wast
 
-#%.wasm: %.c
-#	$(cc) -emit-llvm --target=wasm32 -Oz $< -c -o $(basename $<).bc
-#	$(llc) -asm-verbose=false $(basename $<).bc -o $(basename $<).s
-#	#$(s2wasm) --import-memory $(basename $<).s > $(basename $<).wast
-#	$(s2wasm) $(basename $<).s -o $(basename $<).wast
-#	$(wast2wasm) $(basename $<).wast -o $@
+outDir=out
+srcDir=src
+dstDir=$(outDir)/$(srcDir)
 
-%.s: %.c
-	$(cc) -emit-llvm --target=wasm32 -Oz $< -c -o $(basename $<).bc
-	$(llc) -asm-verbose=false $(basename $<).bc -o $(basename $<).s
+$(dstDir)/%.c.s: $(srcDir)/%.c
+	mkdir -p $(outDir)/$(srcDir)
+	$(cc) -emit-llvm --target=wasm32 -Oz $< -c -o $(dstDir)/$(notdir $<).bc
+	$(llc) -asm-verbose=false $(dstDir)/$(notdir $<).bc -o $(dstDir)/$(notdir $<).s
 
-%.wast: %.s
+$(dstDir)/%.c.wast: $(dstDir)/%.c.s
 	$(s2wasm) --import-memory $< -o $@
 
-%.main_wast: %.s
+$(dstDir)/%.c.main_wast: $(dstDir)/%.c.s
 	$(s2wasm) $< -o $@
 
-%.wasm: %.wast
+$(dstDir)/%.c.wasm: $(dstDir)/%.c.wast
 	$(wast2wasm) $< -o $@
 	
-%.main_wasm: %.main_wast
+$(dstDir)/%.c.main_wasm: $(dstDir)/%.c.main_wast
 	$(wast2wasm) $< -o $@
 	
-all: addTwoInc.wasm
+.PHONY: all, clean
 
-memory.s: memory.c
-memory.main_wast: memory.s
-memory.main_wasm: memory.main_wast
+all: $(dstDir)/addTwoInc.wasm
 
-inc.s: inc.c
-inc.wast: inc.s
-inc.wasm: inc.wast
+$(dstDir)/memory.c.s: $(srcDir)/memory.c
+$(dstDir)/memory.c.main_wast: $(dstDir)/memory.s
+$(dstDir)/memory.c.main_wasm: $(dstDir)/memory.main_wast
 
-addTwo.s: addTwo.c
-addTwo.wast: addTwo.s
-addTwo.wasm: addTwo.wast
+$(dstDir)/inc.c.s: $(srcDir)/inc.c
+$(dstDir)/inc.c.wast: $(dstDir)/inc.c.s
+$(dstDir)/inc.c.wasm: $(dstDir)/inc.c.wast
+
+$(dstDir)/addTwo.c.s: $(srcDir)/addTwo.c
+$(dstDir)/addTwo.c.wast: $(dstDir)/addTwo.c.s
+$(dstDir)/addTwo.c.wasm: $(dstDir)/addTwo.c.wast
 
 # Using memory.c to export a memory section causes an
 # error "unsupport export type: 2"
-#addTwoInc.wasm: memory.main_wasm addTwo.wasm inc.wasm
-addTwoInc.wasm: addTwo.wasm inc.wasm
+$(dstDir)/addTwoInc.wasm: $(dstDir)/addTwo.c.wasm $(dstDir)/inc.c.wasm
 	$(wasm-merge) $^ -o $@
 	$(wasm2wast) $@ -o $(basename $@).wast
 
 clean:
-	rm -f *.s *.bc *wasm *wast
+	rm -rf $(outDir)

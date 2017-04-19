@@ -2,7 +2,7 @@
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
       "declaration": true,
-      "outDir": "../build/tests"
+      "outDir": "../out/tests"
   },
   "files": [
       "utils.ts"

@@ -9,7 +9,7 @@
   "scripts": {
     "add:node-v8": "rm -rf node-v8 && mkdir node-v8 && curl https://nodejs.org/download/nightly/v8.0.0-nightly201704186c912a8216/node-v8.0.0-nightly201704186c912a8216-linux-x64.tar.xz -s -o node-v8.tar.xz && tar -xJf node-v8.tar.xz -C node-v8 --strip-components 1 && rm node-v8.tar.xz",
     "pretest:utils": "tsc -p utils/utils.tsconfig.json && tsc -p utils/utils.spec.tsconfig.json",
-    "test:utils": "./node-v8/bin/node ./node_modules/.bin/alsatian build/tests/utils.spec.js",
+    "test:utils": "./node-v8/bin/node ./node_modules/.bin/alsatian out/tests/utils.spec.js",
     "test:merge": "make clean && make"
   },
   "dependencies": {
