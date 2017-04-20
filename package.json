@@ -12,8 +12,10 @@
     "initialize": "yarn build:alsatian && yarn add:node-v8",
     "pretest:utils": "tsc -p utils/utils.tsconfig.json && tsc -p utils/utils.spec.tsconfig.json",
     "test:utils": "./node-v8/bin/node ./node_modules/alsatian/cli/alsatian-cli.js out/tests/utils.spec.js",
+    "pretest:utils.dbg": "yarn pretest:utils",
     "test:utils.dbg": "DEBUG=utils.spec ./node-v8/bin/node ./node_modules/alsatian/cli/alsatian-cli.js out/tests/utils.spec.js --tap | tap-fail-exit-one",
-    "test:merge": "make clean && make"
+    "pretest:merge": "make clean",
+    "test:merge": "make"
   },
   "dependencies": {
     "debug": "^2.6.3"

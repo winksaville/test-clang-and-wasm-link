@@ -64,8 +64,8 @@ export class UtilsTests {
         await Expect(async () => {
             outFile = await clang2wasm("./utils/ok.c");
         }).not.toThrowAsync({
-            onOk: () => debug("Successfully compiled"),
-            onErr: () => debug("Failed to compile")
+            onOk: () => debug("testClang2wasmSuccess: clang2wasm successfully compiled"),
+            onErr: () => debug("testClang2wasmSuccess: clang2wasm failed to compile")
         });
 
         debug(`testC2wasmSuccess:- ${inFile} to ${outFile}`);
@@ -79,8 +79,8 @@ export class UtilsTests {
     @AsyncTest("Test clang2wasm fails on non existent file")
     public async testClang2wasmFailsOnNonExistentFile() {
         await Expect(() => clang2wasm("non-existent-file")).toThrowAsync({
-            onErr: () => debug("Succeeded but shoudn't have"),
-            onOk: () => debug("Failed as expected")
+            onErr: () => debug("testClang2wasmFailOnNonExistentFile: clang2wasm succeeded but shoudn't have"),
+            onOk: () => debug("testClang2wasmFailOnNonExistentFile: clant2wasm failed as expeded"),
         });
     }
 }
