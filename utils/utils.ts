@@ -162,7 +162,8 @@ Promise<string> {
 
     let bcPath = await clang2bc(inputPath, path.join(tempDir, `${fileName}.bc`));
     let sPath = await bc2s(bcPath, path.join(tempDir, `${fileName}.s`));
-    return await s2wasm(sPath, path.join(outDir, `${fileName}.wasm`));
+    let wastPath = await s2wasm(sPath, path.join(outDir, `${fileName}.wast`));
+    return await wast2wasm(wastPath, path.join(outDir, `${fileName}.wasm`));
 }
 
 /**

@@ -7,12 +7,15 @@ import {
     Expect,
     SetupFixture,
     TeardownFixture,
+    TestCase,
     TestFixture,
 } from "alsatian";
 
 import {
     readFileAsync,
+    clang2instance,
     clang2wasm,
+    instantiateWasmFile,
     statAsync,
     unlinkAsync,
 } from "./utils";
@@ -80,7 +83,35 @@ export class UtilsTests {
     public async testClang2wasmFailsOnNonExistentFile() {
         await Expect(() => clang2wasm("non-existent-file")).toThrowAsync({
             onErr: () => debug("testClang2wasmFailOnNonExistentFile: clang2wasm succeeded but shoudn't have"),
-            onOk: () => debug("testClang2wasmFailOnNonExistentFile: clant2wasm failed as expeded"),
+            onOk: () => debug("testClang2wasmFailOnNonExistentFile: clant2wasm failed as expected"),
         });
+    }
+
+    @TestCase("./utils/inc.c")
+    @AsyncTest("test instantiateWasmFile")
+    public async testInstantiateWasmFile(filePath: string) {
+        let wasmFile: string;
+
+        await Expect(async () => {
+            wasmFile = await clang2wasm(filePath);
+        }).not.toThrowAsync();
+
+        let inst: WebAssembly.Instance;
+        await Expect(async () => {
+            inst = await instantiateWasmFile(wasmFile);
+        }).not.toThrowAsync();
+
+        Expect(inst.exports.inc(1)).toBe(2);
+    }
+
+    @TestCase("./utils/inc.c")
+    @AsyncTest("test clang2instance")
+    public async testClang2instance(filePath: string) {
+        let inst: WebAssembly.Instance;
+        await Expect(async () => {
+            inst = await clang2instance(filePath);
+        }).not.toThrowAsync();
+
+        Expect(inst.exports.inc(1)).toBe(2);
     }
 }
