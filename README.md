@@ -19,7 +19,7 @@ to ~/prgs/binaryen.
 ## Initialize
 ```
 yarn
-yarn add:node-v8
+yarn initialize
 ```
 
 ## Test merge
@@ -37,6 +37,10 @@ move it into one or more npm libraries to make it available
 to others, we'll see.
 ```
 $ yarn test:utils
+```
+or
+```
+$ yarn test:utils.dbg
 ```
 
 ## What I learned about linking/merging

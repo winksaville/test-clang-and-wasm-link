@@ -34,7 +34,12 @@ export class UtilsTests {
 
     @AsyncTest("Test readFileAsync success")
     public async testReadFileAsync() {
-        let data = await readFileAsync("./utils/data.txt");
+        let data: Uint8Array;
+
+        await Expect(async () => {
+            data = await readFileAsync("./utils/data.txt")
+        }).not.toThrowAsync();
+
         Expect(data.length).toBe(9);
         let len = data.length;
         Expect(len).toBe(9);
@@ -46,74 +51,36 @@ export class UtilsTests {
 
     @AsyncTest("Test readFileAsync failing")
     public async testReadFileAsyncFail() {
-        let file="non-existent-file";
-        let succeeded: boolean;
-
-        // TODO: This should work:
-        //    await Expect(() => readFileAsync(file)).toThrowAsync();
-        try {
-            await readFileAsync(file);
-            succeeded = true; // Should not happen
-        } catch (err) {
-            succeeded = false; // Expected to fail
-        }
-        debug(`testReadFileAsyncFail: reading ${file} ${succeeded ? "succeeded but shouldn't have" : "failed as expected"}`);
-        Expect(succeeded).not.toBeTruthy();
+        await Expect(() => readFileAsync("non-existent-file")).toThrowAsync();
     }
 
     @AsyncTest("Test clang2wasm succeeds")
     public async testClang2wasmSuccess() {
         const inFile = "./utils/ok.c";
-        let outFile = "<empty>";
+        let outFile: string;
 
-        debug(`testC2wasmSuccess:+ ${inFile}`); 
-        try {
-            outFile = await clang2wasm(inFile);
-            debug(`testC2wasmSuccess: ${inFile} to ${outFile}`);
+        debug(`testC2wasmSuccess:+ ${inFile}`);
 
-            let stats = await statAsync(outFile);
-            debug(`testC2wasmSuccess: stat ${outFile} stats=${JSON.stringify(stats)} done`);
-
-            await unlinkAsync(outFile);
-            debug(`testC2wasmSuccess: unlink ${outFile} done`);
-        } catch (err) {
-            Expect(`testC2wasmSuccess: error=${err}`).not.toBeTruthy(); // Always fail
-        }
+        await Expect(async () => {
+            outFile = await clang2wasm("./utils/ok.c");
+        }).not.toThrowAsync({
+            onOk: () => debug("Successfully compiled"),
+            onErr: () => debug("Failed to compile")
+        });
 
         debug(`testC2wasmSuccess:- ${inFile} to ${outFile}`);
     }
 
     @AsyncTest("Test clang2wasm fails on bad c file")
     public async testClang2wasmFailsOnBadFile() {
-        const inFile = "./utils/bad.c";
-        let outFile = "<empty>";
-        let succeeded: boolean;
-
-        // TODO: This should work:
-        //    await Expect(outFile = (): string => {return clang2wasm(inFile)})).toThrowAsync();
-        try {
-            outFile = await clang2wasm(inFile);
-            succeeded = true; // Should not happen
-        } catch (err) {
-            succeeded = false; // Expected to fail
-        }
-        debug(`testClang2wasmFailsOnBadFile: ${inFile} to ${outFile} ${succeeded ? "succeeded but shouldn't have" : "failed as expected"}`);
-        Expect(succeeded).not.toBeTruthy();
+        await Expect(() => clang2wasm("./utils/bad.c")).toThrowAsync();
     }
 
     @AsyncTest("Test clang2wasm fails on non existent file")
     public async testClang2wasmFailsOnNonExistentFile() {
-        const inFile = "non-existent-file";
-        let outFile = "<empty>";
-        let succeeded: boolean;
-
-        try {
-            outFile = await clang2wasm(inFile);
-            succeeded = true; // Should not happen
-        } catch (err) {
-            succeeded = false; // Expeced to fail
-        }
-        debug(`testClang2wasmFailsOnNonExistentFile: ${inFile} to ${outFile} ${succeeded ? "succeeded but shouldn't have" : "failed as expected"}`);
-        Expect(succeeded).not.toBeTruthy();
+        await Expect(() => clang2wasm("non-existent-file")).toThrowAsync({
+            onErr: () => debug("Succeeded but shoudn't have"),
+            onOk: () => debug("Failed as expected")
+        });
     }
 }
