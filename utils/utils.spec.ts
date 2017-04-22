@@ -1,6 +1,9 @@
 /**
  * Test Utils
  */
+import * as path from "path";
+
+import hookStdOut = require("intercept-stdout");
 
 import {
     AsyncTest,
@@ -13,11 +16,14 @@ import {
 
 import {
     readFileAsync,
-    clang2instance,
+    wast2wasm,
+    wasm2WasmModule,
     clang2wasm,
-    instantiateWasmFile,
-    statAsync,
-    unlinkAsync,
+    clang2WasmModule,
+    clang2WasmInstance,
+    module2WasmInstance,
+    displayWasmModuleExports,
+    displayWasmModuleImports,
 } from "./utils";
 
 import * as debugModule from "debug";
@@ -37,7 +43,7 @@ export class UtilsTests {
 
     @AsyncTest("Test readFileAsync success")
     public async testReadFileAsync() {
-        let data: Uint8Array;
+        let data = new Uint8Array(0);
 
         await Expect(async () => {
             data = await readFileAsync("./utils/data.txt")
@@ -60,7 +66,7 @@ export class UtilsTests {
     @AsyncTest("Test clang2wasm succeeds")
     public async testClang2wasmSuccess() {
         const inFile = "./utils/ok.c";
-        let outFile: string;
+        let outFile = "<empty>";
 
         debug(`testC2wasmSuccess:+ ${inFile}`);
 
@@ -96,22 +102,67 @@ export class UtilsTests {
             wasmFile = await clang2wasm(filePath);
         }).not.toThrowAsync();
 
-        let inst: WebAssembly.Instance;
+        let mod: WebAssembly.Module;
         await Expect(async () => {
-            inst = await instantiateWasmFile(wasmFile);
+            mod = await wasm2WasmModule(wasmFile);
         }).not.toThrowAsync();
 
-        Expect(inst.exports.inc(1)).toBe(2);
+        let inst: WebAssembly.Instance;
+        await Expect(async () => {
+            inst = await module2WasmInstance(mod);
+        }).not.toThrowAsync();
+
+        if (inst) {
+            Expect(inst.exports.inc(1)).toBe(2);
+        } else {
+            Expect('testInstantiateWasmFile: inst is not defined').not.toBeTruthy();
+        }
     }
 
     @TestCase("./utils/inc.c")
-    @AsyncTest("test clang2instance")
-    public async testClang2instance(filePath: string) {
+    @AsyncTest("test clang2WasmInstance")
+    public async testClang2Wasminstance(filePath: string) {
         let inst: WebAssembly.Instance;
         await Expect(async () => {
-            inst = await clang2instance(filePath);
+            inst = await clang2WasmInstance(filePath);
         }).not.toThrowAsync();
 
-        Expect(inst.exports.inc(1)).toBe(2);
+        if (inst) {
+            Expect(inst.exports.inc(1)).toBe(2);
+        } else {
+            Expect('testClang2instance: inst is not defined').not.toBeTruthy();
+        }
+    }
+
+    @TestCase("./utils/getNumberAndInc.c")
+    @AsyncTest("test display WasmModule imports and imports")
+    public async testDisplayWasmModuleImportsAndExports(filePath: string) {
+        let fileName = path.basename(filePath);
+        let dirName = path.dirname(filePath);
+
+        let mod: WebAssembly.Module;
+        await Expect(async () => {
+            mod = await clang2WasmModule(filePath);
+        }).not.toThrowAsync();
+
+        let logs: string[] = [];
+        let unhookStdOut = hookStdOut((s: string) => {
+            logs.push(s.trim());
+        });
+        try {
+            displayWasmModuleExports(mod);
+            displayWasmModuleImports(mod);
+        } catch (err) {
+            <void>err;
+        } finally {
+            unhookStdOut();
+        }
+
+        Expect(logs.length).toBe(5);
+        Expect(logs[0]).toBe("length=2");
+        Expect(logs[1]).toBe("[0] name=memory kind=memory");
+        Expect(logs[2]).toBe("[1] name=getNumberAndInc kind=function");
+        Expect(logs[3]).toBe("length=1");
+        Expect(logs[4]).toBe("[0] name=getNumber kind=function");
     }
 }
