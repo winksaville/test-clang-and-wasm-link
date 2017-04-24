@@ -20,13 +20,14 @@
   "dependencies": {
     "debug": "^2.6.3",
     "intercept-stdout": "^0.1.2",
+    "source-map-support": "^0.4.14",
     "typescript": "^2.2.2"
   },
   "devDependencies": {
     "@types/debug": "^0.0.29",
     "@types/node": "^7.0.13",
     "@types/webassembly-js-api": "^0.0.0",
-    "alsatian": "https://github.com/winksaville/alsatian#add-Messages-to-toThrowAsync",
+    "alsatian": "file:../alsatian.myfork",
     "tap-fail-exit-one": "^1.0.0-beta.1"
   }
 }

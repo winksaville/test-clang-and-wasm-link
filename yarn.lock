@@ -25,9 +25,8 @@
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/@types/webassembly-js-api/-/webassembly-js-api-0.0.0.tgz#a4def3c6d1a5c951190d1649e6844eda9a9e5432"
 
-"alsatian@https://github.com/winksaville/alsatian#add-Messages-to-toThrowAsync":
+"alsatian@file:../alsatian.myfork":
   version "1.3.0"
-  resolved "https://github.com/winksaville/alsatian#fc36dfd76b9e1cd6dcaecc8d3bb08d4bbc7de4ae"
   dependencies:
     "@types/glob" "^5.0.30"
     "@types/node" ">=0.0.2"
@@ -233,6 +232,16 @@ readable-stream@^2, readable-stream@^2.1.5:
 reflect-metadata@^0.1.3:
   version "0.1.10"
   resolved "https://registry.yarnpkg.com/reflect-metadata/-/reflect-metadata-0.1.10.tgz#b4f83704416acad89988c9b15635d47e03b9344a"
+
+source-map-support@^0.4.14:
+  version "0.4.14"
+  resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.4.14.tgz#9d4463772598b86271b4f523f6c1f4e02a7d6aef"
+  dependencies:
+    source-map "^0.5.6"
+
+source-map@^0.5.6:
+  version "0.5.6"
+  resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.6.tgz#75ce38f52bf0733c5a7f0c118d81334a2bb5f412"
 
 sprintf-js@~1.0.2:
   version "1.0.3"

@@ -1,6 +1,8 @@
 /**
  * Test Utils
  */
+require('source-map-support').install();
+
 import * as path from "path";
 
 import hookStdOut = require("intercept-stdout");
@@ -8,8 +10,10 @@ import hookStdOut = require("intercept-stdout");
 import {
     AsyncTest,
     Expect,
+    IgnoreTest,
     SetupFixture,
     TeardownFixture,
+    Test,
     TestCase,
     TestFixture,
 } from "alsatian";
@@ -41,6 +45,11 @@ export class UtilsTests {
         debug("teardownFixture:#");
     }
 
+    @Test()
+    public testToBe() {
+        Expect(1).toBe(2);
+    }
+
     @AsyncTest("Test readFileAsync success")
     public async testReadFileAsync() {
         let data = new Uint8Array(0);
@@ -63,20 +72,15 @@ export class UtilsTests {
         await Expect(() => readFileAsync("non-existent-file")).toThrowAsync();
     }
 
+    @TestCase("./utils/bad.c")
     @AsyncTest("Test clang2wasm succeeds")
-    public async testClang2wasmSuccess() {
-        const inFile = "./utils/ok.c";
-        let outFile = "<empty>";
+    public async testClang2wasmSuccess(inFile: string) {
+        let outFile: string;
 
         debug(`testC2wasmSuccess:+ ${inFile}`);
-
         await Expect(async () => {
-            outFile = await clang2wasm("./utils/ok.c");
-        }).not.toThrowAsync({
-            onOk: () => debug("testClang2wasmSuccess: clang2wasm successfully compiled"),
-            onErr: () => debug("testClang2wasmSuccess: clang2wasm failed to compile")
-        });
-
+            outFile = await clang2wasm(inFile);
+        }).not.toThrowAsync();
         debug(`testC2wasmSuccess:- ${inFile} to ${outFile}`);
     }
 
@@ -87,10 +91,7 @@ export class UtilsTests {
 
     @AsyncTest("Test clang2wasm fails on non existent file")
     public async testClang2wasmFailsOnNonExistentFile() {
-        await Expect(() => clang2wasm("non-existent-file")).toThrowAsync({
-            onErr: () => debug("testClang2wasmFailOnNonExistentFile: clang2wasm succeeded but shoudn't have"),
-            onOk: () => debug("testClang2wasmFailOnNonExistentFile: clant2wasm failed as expected"),
-        });
+        await Expect(() => clang2wasm("non-existent-file")).toThrowAsync();
     }
 
     @TestCase("./utils/inc.c")
@@ -134,6 +135,7 @@ export class UtilsTests {
         }
     }
 
+    //@IgnoreTest()
     @TestCase("./utils/getNumberAndInc.c")
     @AsyncTest("test display WasmModule imports and imports")
     public async testDisplayWasmModuleImportsAndExports(filePath: string) {
@@ -146,9 +148,7 @@ export class UtilsTests {
         }).not.toThrowAsync();
 
         let logs: string[] = [];
-        let unhookStdOut = hookStdOut((s: string) => {
-            logs.push(s.trim());
-        });
+        let unhookStdOut = hookStdOut((s: string) => logs.push(s.trim()));
         try {
             displayWasmModuleExports(mod);
             displayWasmModuleImports(mod);
@@ -158,6 +158,7 @@ export class UtilsTests {
             unhookStdOut();
         }
 
+        console.log("line 156 testDisplayWasmModuleImportsAndExports");
         Expect(logs.length).toBe(5);
         Expect(logs[0]).toBe("length=2");
         Expect(logs[1]).toBe("[0] name=memory kind=memory");
