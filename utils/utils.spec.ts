@@ -43,8 +43,9 @@ export class UtilsTests {
         debug("teardownFixture:#");
     }
 
+    @IgnoreTest()
     @Test()
-    public testToBe() {
+    public testFailingToBe() {
         Expect(1).toBe(2);
     }
 
@@ -70,12 +71,12 @@ export class UtilsTests {
         await Expect(() => readFileAsync("non-existent-file")).toThrowAsync();
     }
 
-    @TestCase("./utils/bad.c")
+    @TestCase("./utils/ok.c")
     @AsyncTest("Test clang2wasm succeeds")
     public async testClang2wasmSuccess(inFile: string) {
         let outFile: string;
 
-        debug(`testC2wasmSuccess:+ ${inFile}`);
+        debug(`testClang2wasmSuccess:+ ${inFile}`);
         await Expect(async () => {
             outFile = await clang2wasm(inFile);
         }).not.toThrowAsync();
@@ -133,7 +134,6 @@ export class UtilsTests {
         }
     }
 
-    //@IgnoreTest()
     @TestCase("./utils/getNumberAndInc.c")
     @AsyncTest("test display WasmModule imports and imports")
     public async testDisplayWasmModuleImportsAndExports(filePath: string) {
@@ -156,7 +156,6 @@ export class UtilsTests {
             unhookStdOut();
         }
 
-        console.log("line 156 testDisplayWasmModuleImportsAndExports");
         Expect(logs.length).toBe(5);
         Expect(logs[0]).toBe("length=2");
         Expect(logs[1]).toBe("[0] name=memory kind=memory");
