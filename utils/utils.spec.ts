@@ -1,8 +1,6 @@
 /**
  * Test Utils
  */
-require('source-map-support').install();
-
 import * as path from "path";
 
 import hookStdOut = require("intercept-stdout");
