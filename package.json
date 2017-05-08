@@ -7,26 +7,9 @@
   "author": "Wink Saville <wink@saville.com>",
   "license": "MIT",
   "scripts": {
-    "build:alsatian": "cd node_modules/alsatian && npm run build",
-    "add:node-v8": "rm -rf node-v8 && mkdir node-v8 && curl https://nodejs.org/download/nightly/v8.0.0-nightly201704186c912a8216/node-v8.0.0-nightly201704186c912a8216-linux-x64.tar.xz -s -o node-v8.tar.xz && tar -xJf node-v8.tar.xz -C node-v8 --strip-components 1 && rm node-v8.tar.xz",
-    "initialize": "yarn build:alsatian && yarn add:node-v8",
-    "pretest:utils": "tsc -p utils/utils.tsconfig.json && tsc -p utils/utils.spec.tsconfig.json",
-    "test:utils": "./node-v8/bin/node ./node_modules/alsatian/cli/alsatian-cli.js out/tests/utils.spec.js",
-    "pretest:utils.dbg": "yarn pretest:utils",
-    "test:utils.dbg": "DEBUG=utils.spec ./node-v8/bin/node ./node_modules/alsatian/cli/alsatian-cli.js out/tests/utils.spec.js --tap | tap-fail-exit-one",
-    "pretest:merge": "make clean",
-    "test:merge": "make"
-  },
-  "dependencies": {
-    "debug": "^2.6.3",
-    "intercept-stdout": "^0.1.2",
-    "typescript": "^2.2.2"
-  },
-  "devDependencies": {
-    "@types/debug": "^0.0.29",
-    "@types/node": "^7.0.13",
-    "@types/webassembly-js-api": "^0.0.0",
-    "alsatian": "file:../alsatian.myfork",
-    "tap-fail-exit-one": "^1.0.0-beta.1"
+    "cleanup": "rm -rf out",
+    "distcleanup": "yarn cleanup && rm -rf node_modules",
+    "pretest": "make clean",
+    "test": "make"
   }
 }
