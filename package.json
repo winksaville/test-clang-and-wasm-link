@@ -1,6 +1,6 @@
 {
   "name": "test-clang-and-wasm-merge",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Test clang and wasm-merge",
   "main": "",
   "repository": "git@github.com:winksaville/test-clang-and-wasm-merge.git",
@@ -9,7 +9,12 @@
   "scripts": {
     "cleanup": "rm -rf out",
     "distcleanup": "yarn cleanup && rm -rf node_modules",
-    "pretest": "make clean",
-    "test": "make"
+    "pretest": "make && tsc -p src/test.tsconfig.json",
+    "test": "node out/test.js"
+  },
+  "dependencies": {
+    "@types/node": "^7.0.18",
+    "@types/webassembly-js-api": "^0.0.1",
+    "wasm-utils": "https://github.com/winksaville/wasm-utils"
   }
 }
