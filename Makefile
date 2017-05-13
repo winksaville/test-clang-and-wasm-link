@@ -4,6 +4,7 @@ s2wasm=$(HOME)/prgs/binaryen/bin/s2wasm
 wasm-merge=$(HOME)/prgs/binaryen/bin/wasm-merge
 wast2wasm=$(HOME)/prgs/wabt/out/clang/Debug/wast2wasm
 wasm2wast=$(HOME)/prgs/wabt/out/clang/Debug/wasm2wast
+wasm-link=$(HOME)/prgs/wabt.myfork/out/clang/debug/wasm-link
 
 outDir=out
 srcDir=src
@@ -45,7 +46,7 @@ $(dstDir)/addTwo.c.wasm: $(dstDir)/addTwo.c.wast
 # Using memory.c to export a memory section causes an
 # error "unsupport export type: 2"
 $(dstDir)/addTwoInc.wasm: $(dstDir)/addTwo.c.wasm $(dstDir)/inc.c.wasm
-	$(wasm-merge) $^ -o $@
+	$(wasm-link) $^ -o $@
 	$(wasm2wast) $@ -o $(basename $@).wast
 
 clean:
