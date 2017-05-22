@@ -51,3 +51,6 @@ $(dstDir)/addTwoInc.wasm: $(dstDir)/addTwo.c.wasm $(dstDir)/inc.c.wasm
 
 clean:
 	rm -rf $(outDir)
+
+distclean: clean
+	rm -rf node_modules
