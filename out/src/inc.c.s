@@ -13,5 +13,5 @@ inc:
 	.size	inc, .Lfunc_end0-inc
 
 
-	.ident	"clang version 5.0.0 (trunk 300422)"
+	.ident	"clang version 5.0.0 (trunk 303787) (llvm/trunk 303786)"
 	.functype	addTwo, i32, i32, i32
